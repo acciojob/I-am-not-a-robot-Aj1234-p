@@ -38,3 +38,11 @@ p {
 button {
   margin: 20px;
 }
+
+.reset-btn{
+  display: none;
+}
+
+.verify-btn{
+  display: none;
+}
