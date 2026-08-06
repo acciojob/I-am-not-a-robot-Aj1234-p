@@ -4,39 +4,59 @@ let verifyButton = document.querySelector('#verify');
 let msg = document.querySelector('.msg');
 let eventCnt = 0, firstImageLink = "", secondImageLink = "",firstImageClass,secondImageClass, isFirstLinkFound = false;;
 
+function shuffleImages(min,max){
+  const numbers = Array.from(
+    {length:max},
+    (_,index)=>min+index
+  );
+  for(let i=numbers.length-1;i>=0;i--){
+    let j = Math.floor(Math.random()*(i+1));
+    [numbers[i],numbers[j]] = [numbers[j],numbers[i]];
+  }
+  return numbers;
+}
+
+console.log(shuffleImages(1,5));
+let shuffleIndex;
+ shuffleIndex = shuffleImages(1,5);
+
+// populate image like recursion
+populateImage(shuffleIndex);
+// image url for random image
+let imageUrl = []; 
+let children = parent.children;
+fetchImageUrl(imageUrl,children);
+console.log(imageUrl)
+// random image
+randomImage(imageUrl);
+
+function populateImage(){
+  for(let i=0;i<shuffleIndex.length;i++){
+    let img = document.createElement('img');
+    img.classList.add(`img${shuffleIndex[i]}`);
+    parent.appendChild(img);
+  }
+}
+
+function fetchImageUrl(imageUrl,children){
+  for(let child of children){
+    let el = child;
+    let style = window.getComputedStyle(el,null);
+    let contentValue = style.getPropertyValue("content");
+    imageUrl.push(contentValue.slice(5,-2));
+  }
+}
+
 function randomImage(imageUrl){
   let newClassIdx = Math.floor(Math.random()*imageUrl.length);
   let link = imageUrl[newClassIdx];
+  console.log(newClassIdx);
   let img = document.createElement('img');
   img.src = link;
   img.classList.add(`img${imageUrl.length+1}`);
   parent.appendChild(img);
 }
 
-function populateImage(){
-  console.log("inside populate");
-  for(let i=1;i<=5;i++){
-    let img = document.createElement('img');
-    img.classList.add(`img${i}`);
-    parent.appendChild(img);
-  }
-}
-
-// populate image like recursion
-populateImage();
-
-// image url for random image
-let children = parent.children;
-let imageUrl = []; 
-for(let child of children){
-  let el = child;
-  let style = window.getComputedStyle(el,null);
-  let contentValue = style.getPropertyValue("content");
-  imageUrl.push(contentValue.slice(5,-2));
-}
-
-// random image
-randomImage(imageUrl);
 
 function resetTheState(event){
   resetButton.style.display = 'none';
@@ -47,7 +67,12 @@ function resetTheState(event){
   firstImageLink = "";
   secondImageLink = "";
   isFirstLinkFound = false;
-  populateImage();
+  shuffleIndex = [];
+  shuffleIndex = shuffleImages(1,5);
+  populateImage(shuffleIndex);
+  imageUrl = [];
+  children = parent.children;
+  fetchImageUrl(imageUrl,children);
   randomImage(imageUrl);
 }
 
